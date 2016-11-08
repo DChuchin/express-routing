@@ -23,13 +23,21 @@ app.all('/sub/*', (req, res)=> {
   res.status(200).send(`You request URI: ${uri}`);
 });
 
-app.post('/post', (req, res)=> {
-  if (Object.keys(reqbody).length) {
+app.post('/post', middleware, (req, res)=> {
+  if (Object.keys(req.body).length) {
     res.json(req.body);
   } else {
     res.sendStatus(404);
   }
 });
+
+function middleware(req, res, next) {
+  if (req.get('Header') == 'key') {
+    next();
+  } else {
+    res.sendStatus(401);
+  };
+};
 
 app.listen(3000, ()=> {
   console.log('listening port 3000');
